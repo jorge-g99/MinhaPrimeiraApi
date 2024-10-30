@@ -30,7 +30,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCMOjyhOKaUhSlg15-yFk-9MGCB-DrGjJg" />
+            android:value="{<google_token>}" />
 
         <activity
             android:name=".NewItemActivity"
