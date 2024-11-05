@@ -2,6 +2,8 @@ package com.example.minhaprimeiraapi
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.location.Location
@@ -140,5 +142,9 @@ class MainActivity : AppCompatActivity() {
         binding.addCta.setOnClickListener {
             startActivity(NewItemActivity.newIntent(this))
         }
+    }
+
+    companion object {
+        fun newIntent(context: Context) = Intent(context, MainActivity::class.java)
     }
 }

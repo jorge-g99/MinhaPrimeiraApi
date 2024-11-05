@@ -9,4 +9,9 @@
     <string name="success_update">Item atualizado com sucesso</string>
     <string name="unknown_error">Erro desconhecido, tente novamente!</string>
     <string name="denied_permission">Permissão não concedida</string>
+    <string name="verify_sms">Verificar SMS</string>
+    <string name="hint_verify_sms">Código SMS</string>
+    <string name="send_sms">Enviar SMS</string>
+    <string name="hint_cellphone">Telefone</string>
+    <string name="code_brazil">+55</string>
 </resources>
