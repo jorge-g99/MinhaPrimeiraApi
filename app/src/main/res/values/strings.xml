@@ -14,4 +14,5 @@
     <string name="send_sms">Enviar SMS</string>
     <string name="hint_cellphone">Telefone</string>
     <string name="code_brazil">+55</string>
+    <string name="logout">Logout</string>
 </resources>
