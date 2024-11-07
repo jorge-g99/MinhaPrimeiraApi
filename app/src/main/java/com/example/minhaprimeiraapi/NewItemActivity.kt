@@ -62,8 +62,7 @@ class NewItemActivity : AppCompatActivity(), OnMapReadyCallback {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            val imageBitmap = BitmapFactory.decodeFile(imageFile!!.path)
-            uploadImageToFirebase(imageBitmap)
+            binding.imageUrl.setText("Imagem Obtida")
         }
     }
 
@@ -105,18 +104,27 @@ class NewItemActivity : AppCompatActivity(), OnMapReadyCallback {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val data = baos.toByteArray()
 
-        val uploadTask = imagesRef.putBytes(data)
-        uploadTask.addOnFailureListener {
-            Toast.makeText(
-                this,
-                "Falha ao realizar upload",
-                Toast.LENGTH_SHORT
-            ).show()
-        }.addOnSuccessListener {
-            imagesRef.downloadUrl.addOnSuccessListener { uri ->
-                binding.imageUrl.setText(uri.toString())
+        binding.loadImageProgress.visibility = View.VISIBLE
+        binding.takePictureCta.isEnabled = false
+        binding.saveCta.isEnabled = false
+        imagesRef.putBytes(data)
+            .addOnFailureListener {
+                binding.loadImageProgress.visibility = View.GONE
+                binding.takePictureCta.isEnabled = true
+                binding.saveCta.isEnabled = true
+                Toast.makeText(
+                    this,
+                    "Falha ao realizar upload",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }.addOnSuccessListener {
+                binding.loadImageProgress.visibility = View.GONE
+                binding.takePictureCta.isEnabled = true
+                binding.saveCta.isEnabled = true
+                imagesRef.downloadUrl.addOnSuccessListener { uri ->
+                    saveData(uri.toString())
+                }
             }
-        }
     }
 
     private fun setupGoogleMap() {
@@ -241,6 +249,12 @@ class NewItemActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun save() {
         if (!validateForm()) return
+
+        val imageBitmap = BitmapFactory.decodeFile(imageFile!!.path)
+        uploadImageToFirebase(imageBitmap)
+    }
+
+    private fun saveData(imageUrl: String) {
         val name = binding.name.text.toString()
         val itemPosition = selectedMarker?.position?.let {
             ItemLocation(
@@ -256,7 +270,7 @@ class NewItemActivity : AppCompatActivity(), OnMapReadyCallback {
                 name,
                 binding.surname.text.toString(),
                 binding.profession.text.toString(),
-                binding.imageUrl.text.toString(),
+                imageUrl,
                 binding.age.text.toString().toInt(),
                 location = itemPosition,
                 Date()
@@ -271,6 +285,7 @@ class NewItemActivity : AppCompatActivity(), OnMapReadyCallback {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
+
                     is Result.Success -> {
                         Toast.makeText(
                             this@NewItemActivity,
@@ -297,8 +312,8 @@ class NewItemActivity : AppCompatActivity(), OnMapReadyCallback {
             Toast.makeText(this, getString(R.string.error_validate_form, "Age"), Toast.LENGTH_SHORT).show()
             return false
         }
-        if (binding.imageUrl.text.toString().isBlank()) {
-            Toast.makeText(this, getString(R.string.error_validate_form, "Image Url"), Toast.LENGTH_SHORT).show()
+        if (imageFile == null) {
+            Toast.makeText(this, getString(R.string.error_validate_take_picture), Toast.LENGTH_SHORT).show()
             return false
         }
         if (binding.profession.text.toString().isBlank()) {
